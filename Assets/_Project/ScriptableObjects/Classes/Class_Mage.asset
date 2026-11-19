@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 721190e9f5428ae40bb616becc822481, type: 3}
+  m_Name: Class_Mage
+  m_EditorClassIdentifier: Assembly-CSharp::RelicAndCoin.Player.PlayerClassConfigSO
+  ClassType: 1
+  ClassName: "Ph\xF9 th\u1EE7y"
+  Description: "S\xE1t th\u01B0\u01A1ng ph\xE9p v\xE0 Mana, \u01B0u ti\xEAn Mana."
+  StartingWeaponPrefab: {fileID: 0}
+  StatModifiers:
+  - Stat: 2
+    Type: 0
+    Value: 30
+  - Stat: 3
+    Type: 1
+    Value: 0.1
+  ManaPriority: 1.5
+  StaminaPriority: 0.5

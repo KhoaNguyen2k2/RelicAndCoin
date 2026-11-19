@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 0}
+  m_Name: DefaultLootDropConfig
+  m_EditorClassIdentifier: Assembly-CSharp:RelicAndCoin.Combat.Loot:LootDropConfigSO
+  BaseDropRate: 0.92
+  NormalTier:
+    NormalChance: 80
+    RareChance: 50
+    EpicChance: 15
+    LegendaryChance: 5
+    MythicalChance: 2.5
+    MinEnemyRarity: 0
+    MaxEnemyRarity: 2
+  HardTier:
+    NormalChance: 70
+    RareChance: 55
+    EpicChance: 17
+    LegendaryChance: 8
+    MythicalChance: 4
+    MinEnemyRarity: 0
+    MaxEnemyRarity: 3
+  NightmareTier:
+    NormalChance: 50
+    RareChance: 60
+    EpicChance: 20
+    LegendaryChance: 10
+    MythicalChance: 5
+    MinEnemyRarity: 2
+    MaxEnemyRarity: 4
+  TreasureRareBonus: 25
+  TreasureEpicBonus: 20
+  TreasureLegendaryBonus: 15
+  TreasureMythicalBonus: 8

@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 721190e9f5428ae40bb616becc822481, type: 3}
+  m_Name: Class_Warrior
+  m_EditorClassIdentifier: Assembly-CSharp::RelicAndCoin.Player.PlayerClassConfigSO
+  ClassType: 0
+  ClassName: "Chi\u1EBFn binh"
+  Description: "S\u1EE9c m\u1EA1nh v\xE0 ph\xF2ng th\u1EE7, \u01B0u ti\xEAn Stamina."
+  StartingWeaponPrefab: {fileID: 0}
+  StatModifiers:
+  - Stat: 0
+    Type: 0
+    Value: 30
+  - Stat: 4
+    Type: 0
+    Value: 3
+  - Stat: 3
+    Type: 0
+    Value: 3
+  ManaPriority: 0.5
+  StaminaPriority: 1.5

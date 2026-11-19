@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c02850fb483d06349b055254b9a12798, type: 3}
+  m_Name: Item_CursedIdol
+  m_EditorClassIdentifier: Assembly-CSharp::RelicAndCoin.Inventory.ItemDataSO
+  Id: item_cursed_idol
+  DisplayName: "T\xF9y L\u1EDDi Nguy\u1EC1n"
+  Description: "Ph\xE1 h\u1EE7y \xF4 c\u1EA1nh khi r\u1EDDi h\u1EA7m ng\u1EE5c."
+  Icon: {fileID: 0}
+  Category: 0
+  GridSize: {x: 1, y: 1}
+  MaxStack: 1
+  BaseValue: 60
+  CurseType: 1
