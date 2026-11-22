@@ -1,7 +1,8 @@
 # Relic & Coin — 2D Top-Down Action RPG & Shop Management
 
+**gif o day**
 ![Gameplay Demo](docs/gameplay-demo.gif)
-*(Ghi chú: Bạn có thể thay đường dẫn ảnh GIF thực tế sau khi quay màn hình)*
+
 
 **Relic & Coin** là dự án game nhập vai hành động 2D kết hợp quản lý cửa hàng (lấy cảm hứng từ *Moonlighter*), được phát triển bằng **Unity 6 (URP 2D)** và **C#**. Dự án tập trung vào việc xây dựng một kiến trúc mã nguồn sạch (Clean Architecture), tách biệt hoàn toàn tầng logic nghiệp vụ khỏi Unity Engine để dễ dàng bảo trì, mở rộng và kiểm thử.
 
