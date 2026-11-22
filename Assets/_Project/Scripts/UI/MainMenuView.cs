@@ -45,6 +45,9 @@ namespace RelicAndCoin.UI
 
         private void Awake()
         {
+            // Luôn khôi phục tốc độ game khi vào Menu chính (tránh bị khựng ở timeScale = 0 từ Game Over)
+            Time.timeScale = 1f;
+
             _btnKerral?.onClick.AddListener(() => SelectGender(CharacterGender.Kerral));
             _btnKaery?.onClick.AddListener(() => SelectGender(CharacterGender.Kaery));
             _btnWarrior?.onClick.AddListener(() => SelectClass(PlayerClassType.Warrior));

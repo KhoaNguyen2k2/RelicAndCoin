@@ -60,7 +60,12 @@ namespace RelicAndCoin.Dungeon.Generation
 
             if (_painter != null)
             {
-                _painter.Paint(_generator.Rooms, _config.GridSize);
+                // Xóa sạch sàn & tường cũ: không vẽ khối gạch hộp lơ lửng giữa màn hình nữa
+                _painter.FloorTilemap?.ClearAllTiles();
+                _painter.WallTilemap?.ClearAllTiles();
+
+                // Thay vào đó, đặt Cổng Hầm Ngục ở góc trên bên phải lưới
+                SpawnEntrancePortal();
 
                 if (_centerDungeonAtOrigin)
                 {
@@ -81,6 +86,19 @@ namespace RelicAndCoin.Dungeon.Generation
             {
                 transform.position = new Vector3(-_config.GridWidth / 2f, -_config.GridHeight / 2f, 0f);
             }
+        }
+
+        /// <summary>
+        /// Tạo đối tượng Cổng Hầm Ngục ở góc trên bên phải lưới (5.5, 2.8),
+        /// để người chơi có không gian rộng rãi chiến đấu, mở rương và bán hàng
+        /// mà không bị tường gạch vẽ đè lên nhân vật hay quầy hàng.
+        /// </summary>
+        private void SpawnEntrancePortal()
+        {
+            // Đối tượng gốc (không con của DungeonGrid) để vị trí thế giới (5.5, 2.8)
+            // không bị dịch khi CenterAtOrigin di chuyển cha Grid sau này.
+            var portalGO = new GameObject("DungeonEntrancePortal");
+            portalGO.AddComponent<DungeonEntrancePortal>();
         }
 
         private void EnsureDefaultTiles()
@@ -115,10 +133,10 @@ namespace RelicAndCoin.Dungeon.Generation
                 }
             }
 
-            // 3. Cửa vàng
+            // 3. Cửa gỗ cổ điển
             if (_painter.DoorTile == null)
             {
-                _painter.DoorTile = CreateColorTile(new Color(0.95f, 0.78f, 0.20f, 1f), "DefaultDoorTile");
+                _painter.DoorTile = CreateColorTile(new Color(0.55f, 0.35f, 0.15f, 1f), "DefaultDoorTile", 16f);
             }
         }
 
@@ -140,18 +158,30 @@ namespace RelicAndCoin.Dungeon.Generation
             return tile;
         }
 
-        private static Tile CreateColorTile(Color color, string tileName)
+        private static Tile CreateColorTile(Color color, string tileName, float pixelsPerUnit = 16f)
         {
-            var texture = new Texture2D(1, 1, TextureFormat.RGBA32, false);
-            texture.SetPixel(0, 0, color);
+            var texture = new Texture2D(16, 16, TextureFormat.RGBA32, false);
+            for (int y = 0; y < 16; y++)
+                for (int x = 0; x < 16; x++)
+                    texture.SetPixel(x, y, color);
             texture.Apply();
             texture.filterMode = FilterMode.Point;
 
+            // Viền tối khớp kích thước với DungeonFloor_Pixel / DungeonWall_Pixel (16x16)
+            for (int i = 0; i < 16; i++)
+            {
+                texture.SetPixel(i, 0, Color.black);
+                texture.SetPixel(i, 15, Color.black);
+                texture.SetPixel(0, i, Color.black);
+                texture.SetPixel(15, i, Color.black);
+            }
+            texture.Apply();
+
             var sprite = Sprite.Create(
                 texture,
-                new Rect(0, 0, 1, 1),
+                new Rect(0, 0, 16, 16),
                 new Vector2(0.5f, 0.5f),
-                1f);
+                pixelsPerUnit);
             sprite.name = tileName + "_Sprite";
 
             var tile = ScriptableObject.CreateInstance<Tile>();

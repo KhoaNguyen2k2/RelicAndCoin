@@ -77,15 +77,17 @@ Assets/_Project/Scripts/
 
 ---
 
-## Hướng dẫn Điều khiển & Trải nghiệm (Controls)
+## Hướng dẫn Điều khiển & Trải nghiệm (Controls - v1.1.0)
 
 | Phím bấm / Thao tác | Chức năng trong game |
 | :--- | :--- |
 | **`W` `A` `S` `D`** hoặc **Phím mũi tên** | Di chuyển nhân vật 4 hướng |
-| **Giữ `Left Shift` + Di chuyển** | Chạy nhanh (`Sprint` — tiêu hao Stamina, cạn sẽ bị khóa mệt mỏi `Fatigue`) |
-| **`Space`** | Lướt né nhanh (`Dash`) |
-| **`J`** hoặc **Chuột trái** | Tấn công bằng vũ khí đang trang bị |
-| **`E`** | Tương tác (mở rương kho báu, kiểm tra quầy hàng) |
+| **Giữ `Left Shift` + Di chuyển** | Chạy nhanh (`Sprint` — tiêu hao Stamina theo thời gian, cạn sẽ rơi vào trạng thái kiệt sức `Fatigue`) |
+| **`Space`** | Lướt né nhanh (`Dash` — nhận khung bất tử `I-Frames` tức thì) |
+| **`J`** hoặc **Chuột trái** | Tấn công bằng vũ khí trang bị (chém theo hướng nhìn hoặc con trỏ chuột, vệt chém trực quan 0.15s, đẩy lùi và gây sát thương thật lên quái vật) |
+| **`E`** (hoặc **`F`**) | Tương tác môi trường: Mở rương kho báu (rơi 1–2 vật phẩm văng ra đất) & Nhặt đồ trên mặt đất (tự động trang bị nếu là vũ khí, hồi máu ngay nếu là bình thuốc, hoặc thêm vào túi đồ) |
+| **Nhận sát thương từ Quái** | Slime tự động tuần tra và truy sát; khi vào tầm đánh sẽ gây sát thương trừ thẳng máu người chơi (`HP_Slider` tụt dần) kèm hiệu ứng nháy đỏ phản hồi |
+| **Màn hình Game Over** | Tự động kích hoạt khi máu người chơi về `0 HP`, tạm dừng thời gian (`Time.timeScale = 0f`), hiển thị bảng phủ tối kèm 2 nút **"Chơi Lại"** (Reset Scene) và **"Về Menu Chính"** |
 
 ---
 

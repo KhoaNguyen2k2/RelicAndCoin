@@ -41,6 +41,12 @@ namespace RelicAndCoin.Core.Stats
 
         private void Awake()
         {
+            if (_config == null)
+            {
+                Debug.LogWarning($"[CharacterStatsController] {name}: BaseStatsConfigSO chưa được gán. Tự tạo instance mặc định.");
+                _config = ScriptableObject.CreateInstance<BaseStatsConfigSO>();
+            }
+
             _model = _config != null
                 ? _config.CreateModel()
                 : new CharacterStatsModel(100f, 100f, 100f);
@@ -61,7 +67,11 @@ namespace RelicAndCoin.Core.Stats
             _model.OnDied                -= OnDied;
         }
 
-        private void Update() => _model.Tick(UnityEngine.Time.deltaTime);
+        private void Update()
+        {
+            if (_model == null) return;
+            _model.Tick(UnityEngine.Time.deltaTime);
+        }
 
         // ── Proxy API (delegate xuống model) ─────────────────────────
         public void TakeDamage(float amount)         => _model.TakeDamage(amount);

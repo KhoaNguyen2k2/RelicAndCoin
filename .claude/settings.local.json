@@ -1,7 +1,11 @@
 {
   "permissions": {
     "allow": [
-      "Bash(dotnet build *)"
+      "Bash(dotnet build *)",
+      "PowerShell(Get-Command *)",
+      "PowerShell(dotnet build *)",
+      "PowerShell($LASTEXITCODE)",
+      "PowerShell([System.Guid]::NewGuid\\(\\).ToString\\(\"N\"\\))"
     ]
   }
 }

@@ -13,10 +13,12 @@ namespace RelicAndCoin.Core.Stats
         [Header("Hồi phục tự nhiên (mỗi giây)")]
         [Min(0f)] public float StaminaRegenPerSecond = 10f;
         [Min(0f)] public float ManaRegenPerSecond    = 5f;
+        [Min(0f)] public float HpRegenPerSecond      = 20f;
 
         [Header("Fatigue")]
         [Min(0.1f)] public float FatigueDuration  = 3f;
         [Min(0f)]   public float StaminaRegenDelay = 1f;
+        [Min(0f)]   public float HpRegenDelay      = 2f;
 
         [Header("Chỉ số chiến đấu gốc")]
         [Min(0f)] public float AttackDamage = 10f;
@@ -31,7 +33,9 @@ namespace RelicAndCoin.Core.Stats
             FatigueDuration,
             StaminaRegenPerSecond,
             ManaRegenPerSecond,
-            StaminaRegenDelay
+            StaminaRegenDelay,
+            HpRegenPerSecond,
+            HpRegenDelay
         );
     }
 }

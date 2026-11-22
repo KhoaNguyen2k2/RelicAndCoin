@@ -1,3 +1,5 @@
+using System.Collections;
+using System.Collections.Generic;
 using RelicAndCoin.AI.Enemies.States;
 using RelicAndCoin.Combat;
 using RelicAndCoin.Combat.Loot;
@@ -8,7 +10,6 @@ using RelicAndCoin.Core.StateMachine;
 using RelicAndCoin.Core.Stats;
 using RelicAndCoin.Player;
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace RelicAndCoin.AI.Enemies
@@ -30,12 +31,14 @@ namespace RelicAndCoin.AI.Enemies
 
         [Header("References")]
         [SerializeField] private Transform _player;
+        [SerializeField] private SpriteRenderer _spriteRenderer;
 
         private CharacterStatsModel _stats;
         private StatusEffectSystem _statusEffects;
         private StateMachine _stateMachine;
         private EnemyContext _ctx;
         private bool _isDead = false;
+        private Coroutine _flashCoroutine;
 
         private PlayerController _playerController;
         private CharacterStatsController _playerStats;
@@ -54,6 +57,9 @@ namespace RelicAndCoin.AI.Enemies
 
         private void Awake()
         {
+            if (_spriteRenderer == null)
+                _spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+
             var diffMode      = _difficulty != null ? _difficulty.Mode : DifficultyMode.Normal;
             float healthMult  = _difficulty != null ? _difficulty.EnemyHealthMultiplier : 1f;
             float damageMult  = _difficulty != null ? _difficulty.EnemyDamageMultiplier : 1f;
@@ -181,15 +187,81 @@ namespace RelicAndCoin.AI.Enemies
                 _ctx.DistanceToPlayer = Vector2.Distance(transform.position, _player.position);
         }
 
+        /// <summary>
+        /// Thực hiện đòn tấn công gây sát thương trực tiếp lên người chơi (gọi từ EnemyAttackState).
+        /// </summary>
+        public void AttackPlayer(CharacterStatsController targetStats)
+        {
+            if (targetStats == null || !IsAlive) return;
+
+            float damage = _data != null ? _data.AttackDamage : 10f;
+            if (_difficulty != null)
+                damage *= _difficulty.EnemyDamageMultiplier;
+
+            targetStats.TakeDamage(damage);
+
+            // Hiệu ứng nháy đỏ nhẹ cho người chơi trong 0.15s
+            if (_player != null)
+            {
+                var playerSr = _player.GetComponentInChildren<SpriteRenderer>();
+                if (playerSr != null)
+                    StartCoroutine(FlashTargetRed(playerSr, 0.15f));
+            }
+
+            Debug.Log($"<color=red>[SLIME TẤN CÔNG]</color> [{_data.EnemyName}] giáng đòn gây <b>{damage:F1}</b> sát thương lên Player! (HP Player: {targetStats.CurrentHP:F1}/{targetStats.MaxHP:F1})");
+        }
+
+        private IEnumerator FlashTargetRed(SpriteRenderer targetSr, float duration)
+        {
+            if (targetSr == null) yield break;
+            Color original = targetSr.color;
+            targetSr.color = new Color(1f, 0.35f, 0.35f, 1f);
+
+            yield return new WaitForSeconds(duration);
+
+            if (targetSr != null)
+                targetSr.color = original;
+        }
+
         public void TakeDamage(DamageResult damage, Vector2 hitDirection)
         {
             if (!IsAlive) return;
 
             _stats.TakeDamage(damage.FinalDamage);
+
+            // Phản hồi trực quan: nháy đỏ trong 0.15s khi trúng đòn
+            if (_spriteRenderer != null)
+            {
+                if (_flashCoroutine != null)
+                    StopCoroutine(_flashCoroutine);
+                _flashCoroutine = StartCoroutine(FlashRedCoroutine(0.15f));
+            }
+
+            // Đẩy lùi nhẹ (Knockback) theo hướng đòn chém
+            if (_ctx.Rigidbody != null)
+            {
+                _ctx.Rigidbody.AddForce(hitDirection * 2f, ForceMode2D.Impulse);
+            }
+
+            Debug.Log($"<color=orange>[ENEMY HIT]</color> [{_data.EnemyName}] trúng đòn nhận {damage.FinalDamage:F1} sát thương! HP còn: {_stats.CurrentHP:F1}/{_stats.MaxHP:F1}");
+
             if (!IsAlive)
             {
                 Die();
             }
+        }
+
+        private IEnumerator FlashRedCoroutine(float duration)
+        {
+            Color originalColor = _spriteRenderer.color;
+            _spriteRenderer.color = Color.red;
+
+            yield return new WaitForSeconds(duration);
+
+            if (_spriteRenderer != null)
+                _spriteRenderer.color = originalColor;
+
+            _flashCoroutine = null;
         }
 
         private void Die()
@@ -199,14 +271,32 @@ namespace RelicAndCoin.AI.Enemies
 
             var mode = _difficulty != null ? _difficulty.Mode : DifficultyMode.Normal;
             var drops = LootDropService.CalculateLoot(LootSourceType.Enemy, mode, _lootTable, _lootConfig, EquippedLoot);
+
+            // Fallback nếu loot table có món nhưng chưa tính ra drops
+            if ((drops == null || drops.Count == 0) && _lootTable != null && _lootTable.Entries.Count > 0)
+            {
+                drops = new List<LootEntry> { _lootTable.Entries[0] };
+            }
+
             DroppedLoot = drops;
+
+            // Rớt vật phẩm DroppedItemPickup văng ra mặt đất khi Slime chết
+            if (drops != null && drops.Count > 0)
+            {
+                for (int i = 0; i < drops.Count; i++)
+                {
+                    float angle = (i * (360f / Mathf.Max(1, drops.Count)) + UnityEngine.Random.Range(-25f, 25f)) * Mathf.Deg2Rad;
+                    Vector2 popDir = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * UnityEngine.Random.Range(0.8f, 1.3f);
+                    DroppedItemPickup.Create(transform.position, drops[i], popDir);
+                }
+            }
 
             OnEnemyDefeated?.Invoke(drops);
 
-            string lootStr = drops.Count > 0
+            string lootStr = drops != null && drops.Count > 0
                 ? string.Join(", ", drops.ConvertAll(d => $"[{d.Rarity}] {d.DisplayName}"))
                 : "Không rơi đồ";
-            Debug.Log($"[{_data.EnemyName}] đã bị hạ gục! Phần thưởng rớt ({drops.Count}): {lootStr}");
+            Debug.Log($"<color=red>[ENEMY DIED]</color> [{_data.EnemyName}] đã bị tiêu diệt! Rớt ra ({drops?.Count ?? 0}) vật phẩm: {lootStr}");
 
             // Ngắt va chạm vật lý để người chơi không bị cản
             var col = GetComponent<Collider2D>();

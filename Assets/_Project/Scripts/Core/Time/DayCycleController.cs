@@ -26,6 +26,12 @@ namespace RelicAndCoin.Core.Time
 
         private void Awake()
         {
+            if (_config == null)
+            {
+                Debug.LogWarning($"[DayCycleController] {name}: DayCycleConfigSO chưa được gán. Tự tạo instance mặc định.");
+                _config = ScriptableObject.CreateInstance<DayCycleConfigSO>();
+            }
+
             float[] durations = _config != null ? _config.ToDurationsArray() : null;
             _model = new DayCycleModel(durations);
 
@@ -39,7 +45,11 @@ namespace RelicAndCoin.Core.Time
             _model.OnNewDayStarted -= HandleNewDay;
         }
 
-        private void Update() => _model.Tick(UnityEngine.Time.deltaTime * _gameSpeed);
+        private void Update()
+        {
+            if (_model == null) return;
+            _model.Tick(UnityEngine.Time.deltaTime * _gameSpeed);
+        }
 
         private void HandlePhaseChanged(DayPhase phase)
         {

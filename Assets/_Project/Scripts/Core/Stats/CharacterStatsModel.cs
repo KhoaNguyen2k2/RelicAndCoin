@@ -29,10 +29,15 @@ namespace RelicAndCoin.Core.Stats
         // ── Hồi tự nhiên mỗi giây ────────────────────────────────────
         private readonly float _staminaRegenPerSecond;
         private readonly float _manaRegenPerSecond;
+        private readonly float _hpRegenPerSecond;
 
         // Thời gian trễ trước khi hồi Stamina (reset mỗi lần TryUseStamina)
         private readonly float _staminaRegenDelay;
         private float _staminaRegenDelayTimer;
+
+        // Thời gian trễ trước khi hồi HP (reset mỗi lần nhận damage)
+        private readonly float _hpRegenDelay;
+        private float _hpRegenTimer;
 
         // ── Modifier list ─────────────────────────────────────────────
         private readonly List<StatModifier> _modifiers = new();
@@ -57,7 +62,9 @@ namespace RelicAndCoin.Core.Stats
             float fatigueDuration       = 3f,
             float staminaRegenPerSecond = 10f,
             float manaRegenPerSecond    = 5f,
-            float staminaRegenDelay     = 1f)
+            float staminaRegenDelay     = 1f,
+            float hpRegenPerSecond      = 20f,
+            float hpRegenDelay          = 2f)
         {
             _baseMaxHP             = baseMaxHP;
             _baseMaxStamina        = baseMaxStamina;
@@ -66,6 +73,8 @@ namespace RelicAndCoin.Core.Stats
             _staminaRegenPerSecond = staminaRegenPerSecond;
             _manaRegenPerSecond    = manaRegenPerSecond;
             _staminaRegenDelay     = staminaRegenDelay;
+            _hpRegenPerSecond      = hpRegenPerSecond;
+            _hpRegenDelay          = hpRegenDelay;
 
             RecalculateMaxStats();
             CurrentHP      = MaxHP;
@@ -103,6 +112,13 @@ namespace RelicAndCoin.Core.Stats
 
             if (CurrentMana < MaxMana)
                 ModifyMana(_manaRegenPerSecond * deltaTime);
+
+            // Đếm ngược delay trước khi hồi HP (reset mỗi lần nhận damage)
+            if (_hpRegenTimer > 0f)
+                _hpRegenTimer -= deltaTime;
+
+            if (_hpRegenTimer <= 0f && CurrentHP < MaxHP)
+                SetHP(CurrentHP + _hpRegenPerSecond * deltaTime);
         }
 
         // ── API công khai: nhận damage / tiêu tốn tài nguyên ──────────
@@ -110,6 +126,8 @@ namespace RelicAndCoin.Core.Stats
         public void TakeDamage(float amount)
         {
             if (amount <= 0f) return;
+            // Reset bộ đếm ngưỡng hồi HP: chỉ hồi sau khi không nhận damage trong một khoảng thời gian
+            _hpRegenTimer = _hpRegenDelay;
             SetHP(CurrentHP - amount);
         }
 

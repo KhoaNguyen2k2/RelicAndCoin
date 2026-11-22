@@ -34,8 +34,9 @@ namespace RelicAndCoin.Player.States
         public void Enter()
         {
             _elapsed = 0f;
-            _ctx.Rigidbody.linearVelocity = Vector2.zero; // khóa di chuyển khi đánh
-            // TODO: Kích hoạt animation vung vũ khí + hitbox qua WeaponController (Lượt 4)
+            // Cho phép người chơi duy trì quán tính di chuyển khi bắt đầu vung kiếm
+            if (_ctx.MoveInput.sqrMagnitude > 0.01f)
+                _ctx.Rigidbody.linearVelocity = _ctx.MoveInput.normalized * _config.WalkSpeed;
         }
 
         public void Tick(float deltaTime)
@@ -51,7 +52,15 @@ namespace RelicAndCoin.Player.States
 
         public void FixedTick(float fixedDeltaTime)
         {
-            _ctx.Rigidbody.linearVelocity = Vector2.zero; // giữ khóa di chuyển trong đánh
+            // Cho phép vừa di chuyển vừa tấn công mượt mà
+            if (_ctx.MoveInput.sqrMagnitude > 0.01f)
+            {
+                _ctx.Rigidbody.linearVelocity = _ctx.MoveInput.normalized * _config.WalkSpeed;
+            }
+            else
+            {
+                _ctx.Rigidbody.linearVelocity = Vector2.zero;
+            }
         }
 
         public void Exit() { }

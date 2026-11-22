@@ -34,9 +34,9 @@ namespace RelicAndCoin.Player.States
         public void Enter()
         {
             _interacted = false;
-            _ctx.Rigidbody.linearVelocity = Vector2.zero;
-            // TODO: Gọi InteractSystem.TryInteract(_ctx.MoveInput) và đăng ký callback
-            // để quay về Idle/Move khi tương tác hoàn tất (Lượt 4)
+            // Cho phép người chơi tiếp tục di chuyển khi bấm phím E mở rương / nhặt đồ
+            if (_ctx.MoveInput.sqrMagnitude > 0.01f)
+                _ctx.Rigidbody.linearVelocity = _ctx.MoveInput.normalized * _config.WalkSpeed;
         }
 
         public void Tick(float deltaTime)
@@ -51,7 +51,15 @@ namespace RelicAndCoin.Player.States
 
         public void FixedTick(float fixedDeltaTime)
         {
-            _ctx.Rigidbody.linearVelocity = Vector2.zero;
+            // Cho phép vừa di chuyển vừa tương tác
+            if (_ctx.MoveInput.sqrMagnitude > 0.01f)
+            {
+                _ctx.Rigidbody.linearVelocity = _ctx.MoveInput.normalized * _config.WalkSpeed;
+            }
+            else
+            {
+                _ctx.Rigidbody.linearVelocity = Vector2.zero;
+            }
         }
 
         public void Exit() { }

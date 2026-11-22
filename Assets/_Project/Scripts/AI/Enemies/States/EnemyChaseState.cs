@@ -43,7 +43,9 @@ namespace RelicAndCoin.AI.Enemies.States
                 return;
             }
 
-            if (_ctx.DistanceToPlayer <= _ctx.Data.AttackRange)
+            // Nới rộng tầm tấn công (+0.6f) trùng với EnemyAttackState để không bị "khoảng trống" khiến Slime lắc transitions
+            float effectiveAttackRange = _ctx.Data.AttackRange + 0.6f;
+            if (_ctx.DistanceToPlayer <= effectiveAttackRange)
             {
                 if (_attackState != null)
                     _ctx.StateMachine.ChangeState(_attackState);
